@@ -12,7 +12,7 @@
         available (remove #(or
                              (and (contains? (deref %) :alive) (= false (:alive (deref %))))
                              (= last-speaker-name (:name (deref %)))) all-people)
-        _ (println "Available to speak:" (map :name available))
+        _ (println "Available to speak:" (map #(:name (deref %)) available))
         ]
     (rand-nth available)))
 

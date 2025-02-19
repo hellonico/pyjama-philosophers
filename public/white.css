@@ -1,95 +1,99 @@
-/* General body styles */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+
 body {
-    background-color: white;
-    color: black;
-    /*font-family: Arial, sans-serif;*/
     margin: 0;
-    padding: 20px; /* Added padding */
-
-    font-family: "Snippet", serif;
-    font-weight: 400;
-    font-style: normal;
-    font-size: 36px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: #0a0a0a;
+    color: white;
+    font-family: 'Orbitron', sans-serif;
+    text-align: center;
 }
-pre {
-    font-size: 36px;
+
+#title {
+    font-size: 50px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    text-shadow: 0 0 20px rgba(0, 255, 255, 1), 0 0 30px rgba(0, 0, 255, 0.8);
+    margin-bottom: 20px;
 }
 
+#image {
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
+    display: block;
+    margin-bottom: 20px;
+}
 
-/* Buttons */
+#output {
+    width: 80%;
+    max-width: 600px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
+}
+
+input, button {
+    width: 100%;
+    height: 50px;
+    font-size: 18px;
+    font-weight: bold;
+    font-family: 'Orbitron', sans-serif;
+    text-transform: uppercase;
+    border-radius: 15px;
+    border: none;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+input {
+    background: #0d47a1;
+    color: white;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+}
+
 button {
-    background-color: white;
-    color: black;
-    border: 2px solid black;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+    background: linear-gradient(135deg, #0d47a1, #1976d2);
+    color: white;
+    transition: transform 0.2s, box-shadow 0.3s;
 }
 
 button:hover {
-    background-color: black;
-    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 1);
 }
 
-/* Remove default focus border */
-button:focus {
-    outline: none;
-    border-color: black; /* Keeps the border color the same */
+ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
 }
 
-/* Input fields */
-input {
-    background-color: white;
-    color: black;
-    border: 2px solid black;
-    padding: 8px 15px;
-    font-size: 16px;
+li {
     width: 100%;
-    box-sizing: border-box;
-}
-
-input:focus {
-    outline: none;
-    border-color: white;
-}
-
-/* Textarea fields */
-textarea {
-    background-color: white;
-    color: black;
-    border: 2px solid black;
-    padding: 10px;
-    font-size: 16px;
-    width: 100%;
-    box-sizing: border-box;
-    height: 100px;
-}
-
-textarea:focus {
-    outline: none;
-    border-color: white;
-}
-
-/* Labels */
-label {
-    color: black;
+    height: 50px;
     font-size: 18px;
-    margin-bottom: 5px;
-    display: block;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0d47a1, #1976d2);
+    color: white;
+    text-transform: uppercase;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+    margin: 10px 0;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.3s;
 }
 
-/* Heading styles */
-h1, h2 {
-    color: black;
-    text-align: center;
-    margin: 20px 0;
-}
-
-h1 {
-    font-size: 56px;
-}
-
-h2 {
-    font-size: 48px;
+li:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 1);
 }

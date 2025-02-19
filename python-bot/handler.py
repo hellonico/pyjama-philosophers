@@ -9,10 +9,14 @@ def handle_request(data):
     """
     Function to process the incoming request and return a response.
     This can be modified by other developers.
+    data has key 'messages' with a list of messages:
+    - {'role': ..., 'content': text of the message}
 
-    :param data: Parsed JSON request data
+    :param data: Parsed JSON request data.
     :return: Dictionary representing the response
     """
+    print(f'{data}')
+
     return {
         "model": "echo",
         "done": True,

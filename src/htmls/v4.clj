@@ -140,6 +140,9 @@
           (= (:uri req) "/state") (handle-state req)
           (= (:uri req) "/join") (handle-join req)
           (= (:uri req) "/leave") (handle-leave req)
+          (= (:uri req) "/chat") {:status  200
+                                  :headers {"Content-Type" "text/html"}
+                                  :body    (slurp "public/v4/index.html")}
           (= (:uri req) "/ask") {:status  200
                                  :headers {"Content-Type" "text/html"}
                                  :body    (slurp "public/v4/ask.html")}
@@ -156,7 +159,7 @@
                   ;(swap! app-state assoc :chatting false)   ; TODO remove this
                   {:status  200
                    :headers {"Content-Type" "text/html"}
-                   :body    (slurp "public/v4/index.html")})))
+                   :body    (slurp "public/v4/welcome.html")})))
       (wrap-file "public")))
 
 (defn -main []

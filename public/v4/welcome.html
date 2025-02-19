@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filosophy Kafe FIKA</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: #0a0a0a;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            flex-direction: row;
+            position: relative;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+
+        .main-image {
+            width: 55%;
+            max-width: 550px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+        }
+
+        .buttons-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-left: 20px;
+        }
+
+        .button {
+            width: 180px;
+            height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0d47a1, #1976d2);
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+            text-decoration: none;
+            text-transform: uppercase;
+            transition: transform 0.2s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .button::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(0);
+            transition: transform 0.3s ease;
+        }
+
+        .button:hover::before {
+            transform: scale(1);
+        }
+
+        .button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 1);
+        }
+
+        .title {
+            position: absolute;
+            top: 5%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 60px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 1), 0 0 30px rgba(0, 0, 255, 0.8);
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+<div class="title">Filosophy Kafe FIKA</div>
+<img src="images/welcome.jpeg" alt="Futuristic Scene" class="main-image">
+<div class="buttons-container">
+    <a href="/chat" class="button">Chat</a>
+    <a href="/people" class="button">People</a>
+    <a href="/ask" class="button">Ask</a>
+    <a href="/state" class="button">State</a>
+</div>
+</body>
+</html>

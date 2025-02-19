@@ -1,0 +1,3 @@
+name,system,endpoint,model,temperature,avatar
+Clyde,Clyde,http://localhost:3100,llama3.1,,https://ryanharveyauthor.com/wp-content/uploads/2018/09/clydeeghost.png
+Pinky,Pinky,http://localhost:3100,tinydolphin,,https://www.giantbomb.com/a/uploads/scale_small/8/87790/2469744-pinky.png

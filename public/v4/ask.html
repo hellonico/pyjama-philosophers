@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversation Summary</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&family=Snippet&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="../white.css">
+    <style>
+        body {
+            font-size: 20pt;
+        }
+        #loading {
+            display: none;
+            font-size: 16px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<button onclick="sendRequest('Summarize the conversation')">Summarize the conversation</button>
+<button onclick="sendRequest('What is the most disruptive thought')">What is the most disruptive thought</button>
+<button onclick="sendRequest('Who is the most disruptive speaker')">Who is the most disruptive speaker</button>
+
+<br><br>
+<textarea id="customQuestion" placeholder="Enter your question"></textarea>
+<button onclick="sendCustomRequest()">Submit</button>
+
+
+
+<br><br>
+<div id="loading">Thinking...</div>
+<div id="response"></div>
+
+<script>
+    function sendRequest(question) {
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('response').innerText = '';
+
+        fetch(`http://localhost:3001/summary`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({question: question})
+        })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('response').innerText = data.message.content;
+            })
+            .catch(error => console.error('Error:', error))
+            .finally(() => {
+                document.getElementById('loading').style.display = 'none';
+            });
+    }
+
+    function sendCustomRequest() {
+        const question = document.getElementById('customQuestion').value;
+        if (question.trim() !== '') {
+            sendRequest(question);
+        }
+    }
+</script>
+</body>
+</html>

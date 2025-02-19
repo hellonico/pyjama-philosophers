@@ -1,0 +1,54 @@
+{
+ :mvn/repos {"psiegman" {:url "https://raw.githubusercontent.com/psiegman/mvn-repo/master/releases/"}}
+
+ :paths     ["src" "experimental" "resources"]
+
+ :aliases
+
+ {
+  :v3      {:main-opts ["-m" "htmls.v3"]}
+  :v4      {:main-opts ["-m" "htmls.v4"]}
+
+  :human   {:main-opts
+            ["-m" "pyjama.games.handlers.core"
+             "--handler" "pyjama.games.handlers.human/handler"
+             "--port" "0"
+             "--name" "Nico"
+             "--server-url" "http://localhost:3001"
+             "--avatar" "images/nico.jpg"
+             ]}
+  :echo   {:main-opts
+            ["-m" "pyjama.games.handlers.core"
+             "--handler" "pyjama.games.handlers.echo/handler"
+             "--port" "0"
+             "--name" "Echo"
+             "--server-url" "http://localhost:3001"
+             "--avatar" "images/echo.jpg"
+             ]}
+  :piporag {:main-opts
+            ["-m" "pyjama.games.handlers.core"
+             "--handler" "pyjama.games.handlers.piporag/handler"
+             "--port" "0"
+             "--name" "Clyde"
+             "--server-url" "http://localhost:3001"
+             "--avatar" "https://www.giantbomb.com/a/uploads/scale_small/8/87790/2469744-pinky.png"
+             ]}
+  }
+
+ :deps
+ {org.clojure/clojure     {:mvn/version "1.12.0"}
+  hellonico/pyjama
+  ;{:git/url "https://github.com/hellonico/pyjama.git"  :sha     "d3f927ba18234a6318f3b1ed264bc17770816537"}
+  {:local/root "../pyjama"}
+  hellonico/pyjama-io
+  {:local/root "../pyjama-io"}
+  org.clojure/data.csv    {:mvn/version "1.1.0"}
+
+  ring/ring               {:mvn/version "1.13.0"}
+  compojure/compojure     {:mvn/version "1.7.1"}
+  http-kit/http-kit       {:mvn/version "2.6.0"}
+  ring/ring-jetty-adapter {:mvn/version "1.9.6"}
+  cheshire/cheshire       {:mvn/version "5.11.0"}
+
+  }
+ }

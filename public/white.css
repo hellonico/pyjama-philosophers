@@ -1,0 +1,95 @@
+/* General body styles */
+body {
+    background-color: white;
+    color: black;
+    /*font-family: Arial, sans-serif;*/
+    margin: 0;
+    padding: 20px; /* Added padding */
+
+    font-family: "Snippet", serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 36px;
+}
+pre {
+    font-size: 36px;
+}
+
+
+/* Buttons */
+button {
+    background-color: white;
+    color: black;
+    border: 2px solid black;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: black;
+    color: white;
+}
+
+/* Remove default focus border */
+button:focus {
+    outline: none;
+    border-color: black; /* Keeps the border color the same */
+}
+
+/* Input fields */
+input {
+    background-color: white;
+    color: black;
+    border: 2px solid black;
+    padding: 8px 15px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+input:focus {
+    outline: none;
+    border-color: white;
+}
+
+/* Textarea fields */
+textarea {
+    background-color: white;
+    color: black;
+    border: 2px solid black;
+    padding: 10px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    height: 100px;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: white;
+}
+
+/* Labels */
+label {
+    color: black;
+    font-size: 18px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+/* Heading styles */
+h1, h2 {
+    color: black;
+    text-align: center;
+    margin: 20px 0;
+}
+
+h1 {
+    font-size: 56px;
+}
+
+h2 {
+    font-size: 48px;
+}

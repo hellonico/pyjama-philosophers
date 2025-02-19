@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&family=Snippet&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="../white.css">
+    <title>Philo BattleGround</title>
+    <style>
+        #output {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .message {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .left {
+            flex-direction: row;
+        }
+
+        .right {
+            flex-direction: row-reverse;
+        }
+
+        .image-container {
+            width: 30%;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .image-container img {
+            max-width: 256px;
+            width: 256px;
+            height: 256px;
+            max-height: 256px;
+        }
+
+        .image-container pre {
+            margin: 5px 0 0 0;
+            font-size: 14px;
+        }
+
+        .text-container {
+            width: 70%;
+            /*background-color: #f0f0f0;*/
+            padding: 10px;
+            border: 1px;
+            border-radius: 10px;
+        }
+
+    </style>
+</head>
+<body>
+<h1 id="title">Battle of the philosophers</h1>
+
+<img id="image" src="" style="max-width: 128px; max-height: 128px; display: none;"/>
+
+<pre id="speaker"></pre>
+<div id="output" style="wrap-option: te">
+    <input id="question" text="Start conversation"/>
+    <button id="start">Start Battle</button>
+    <div id="previous"></div>
+</div>
+<script>
+    document.getElementById('start').addEventListener('click', function () {
+        const inputText = document.getElementById('question').value; // Get the content of the input field
+
+        fetch('http://localhost:3001/question', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({question: inputText})
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Response:', data);
+                document.getElementById("title").textContent = data.answer;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    });
+
+
+    const ws = new WebSocket("ws://localhost:3001/ws");
+    let messageCount = 0;  // Track message count
+
+    ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        const output = document.getElementById("output");
+
+        // Clear previous message
+        output.innerHTML = "";
+
+        // Create message wrapper
+        const messageDiv = document.createElement("div");
+        messageDiv.classList.add("message");
+
+        // Alternate left/right alignment
+        if (data.position === "left") {
+            messageDiv.classList.add("left");
+        } else {
+            messageDiv.classList.add("right");
+        }
+
+        // Create image & speaker container
+        const imageContainer = document.createElement("div");
+        imageContainer.classList.add("image-container");
+
+        const img = document.createElement("img");
+        img.style.display = "none";
+
+        if (data.image) {
+            img.src = data.image;
+            img.style.display = "block";
+        }
+
+        const speaker = document.createElement("pre");
+        speaker.textContent = data.name;
+
+        imageContainer.appendChild(img);
+        imageContainer.appendChild(speaker); // Name goes directly below image
+
+        // Create text container
+        const textContainer = document.createElement("div");
+        textContainer.classList.add("text-container");
+        textContainer.textContent = data.text;
+
+        // Append elements in correct order
+        messageDiv.appendChild(imageContainer);
+        messageDiv.appendChild(textContainer);
+
+        // Replace the existing content
+        output.appendChild(messageDiv);
+
+        messageCount++;  // Increment message count
+    };
+
+    async function fetchQuestions() {
+        try {
+            const response = await fetch("http://localhost:3001/questions");
+            const data = await response.json();
+
+            const previousDiv = document.getElementById("previous");
+            previousDiv.innerHTML = ""; // Clear previous content
+
+            const ul = document.createElement("ul");
+
+            data.forEach((item) => {
+                const li = document.createElement("li");
+                li.textContent = item;
+                li.style.cursor = "pointer"; // Indicate it's clickable
+                li.addEventListener("click", () => {
+                    document.getElementById("question").value = item;
+                });
+                ul.appendChild(li);
+            });
+
+            previousDiv.appendChild(ul);
+        } catch (error) {
+            console.error("Error fetching questions:", error);
+        }
+    }
+
+    fetchQuestions();
+
+
+</script>
+</body>
+</html>

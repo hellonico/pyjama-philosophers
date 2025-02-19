@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>People List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            max-width: 1200px;
+            justify-content: center;
+        }
+        .card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 250px;
+            transition: border 0.3s;
+            position: relative;
+        }
+        .card:hover {
+            border: 2px solid #333;
+        }
+        .card img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+        .card h3 {
+            margin: 10px 0 5px;
+        }
+        .card p {
+            font-size: 14px;
+            color: #555;
+        }
+        .card.dead {
+            opacity: 0.5;
+            filter: grayscale(100%);
+        }
+        .remove-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+        }
+        .add-button {
+            font-size: 24px;
+            padding: 10px 20px;
+            margin: 20px;
+            cursor: pointer;
+        }
+        .dialog {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .dialog input {
+            display: block;
+            margin: 10px 0;
+        }
+        .error {
+            color: red;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<button class="add-button" onclick="showDialog()">+</button>
+<div class="container" id="people-list"></div>
+
+<div class="dialog" id="dialog">
+    <h3>Join</h3>
+    <input id="name" type="text" placeholder="Name" value="Clyde">
+    <input id="system" type="text" placeholder="System" value="Clyde">
+    <input id="endpoint" type="text" placeholder="Endpoint" value="http://localhost:3100">
+    <input id="model" type="text" placeholder="Model" value="tinydolphin">
+    <input id="temperature" type="number" step="0.1" placeholder="Temperature" value="0.8">
+    <input id="avatar" type="text" placeholder="Avatar" value="https://www.giantbomb.com/a/uploads/scale_small/8/87790/2469744-pinky.png">
+    <button onclick="join()">Join</button>
+    <p class="error" id="error">❌</p>
+</div>
+
+<script>
+    async function fetchPeople() {
+        try {
+            const response = await fetch('http://localhost:3001/state');
+            const data = await response.json();
+            const peopleList = document.getElementById('people-list');
+
+            peopleList.innerHTML = '';
+
+            data.people.forEach(person => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                if (!person.alive) {
+                    card.classList.add('dead');
+                }
+
+                const img = document.createElement('img');
+                // img.src = `/images/${person.name.toLowerCase()}.png`;
+                img.src = `${person.avatar}`;
+                img.alt = person.name;
+
+                const name = document.createElement('h3');
+                name.textContent = person.name;
+
+                const model = document.createElement('p');
+                if (person.model !== "") {
+                    model.textContent = `Model: ${person.model}`;
+                }
+
+                const system = document.createElement('p');
+                system.textContent = person.system;
+
+                const removeButton = document.createElement('button');
+                removeButton.className = 'remove-button';
+                removeButton.textContent = '×';
+                removeButton.onclick = () => confirmRemove(person.name);
+
+                card.appendChild(img);
+                card.appendChild(name);
+                card.appendChild(model);
+                card.appendChild(system);
+                card.appendChild(removeButton);
+
+                peopleList.appendChild(card);
+            });
+        } catch (error) {
+            console.error('Error fetching people:', error);
+        }
+    }
+
+    function showDialog() {
+        document.getElementById('dialog').style.display = 'block';
+    }
+
+    async function join() {
+        const data = {
+            name: document.getElementById('name').value,
+            system: document.getElementById('system').value,
+            endpoint: document.getElementById('endpoint').value,
+            model: document.getElementById('model').value,
+            temperature: parseFloat(document.getElementById('temperature').value),
+            avatar: document.getElementById('avatar').value
+        };
+
+        const response = await fetch('http://localhost:3001/join', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        if (result) {
+            document.getElementById('dialog').style.display = 'none';
+            await fetchPeople();
+        } else {
+            document.getElementById('error').style.display = 'block';
+        }
+    }
+
+    function confirmRemove(name) {
+        if (confirm(`Are you sure you want to remove ${name}?`)) {
+            removePerson(name);
+        }
+    }
+
+    async function removePerson(name) {
+        try {
+            const response = await fetch(`http://localhost:3001/leave?name=${encodeURIComponent(name)}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                await fetchPeople();
+            } else {
+                console.error('Failed to remove person');
+            }
+        } catch (error) {
+            console.error('Error removing person:', error);
+        }
+    }
+
+    fetchPeople();
+</script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Live Output</title>
+</head>
+<body>
+<h1>Live Output</h1>
+<pre id="output"></pre>
+<script>
+    const ws = new WebSocket("ws://localhost:3001/ws");
+    ws.onmessage = (event) => {
+        const output = document.getElementById("output");
+        output.textContent += event.data + "\n";
+    };
+</script>
+</body>
+</html>

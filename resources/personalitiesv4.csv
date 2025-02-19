@@ -1,0 +1,4 @@
+name,system,endpoint,model,temperature,avatar
+Nico,Nicole,http://localhost:3000,,"",images/nico.jpg
+Nicole,Nicole,http://localhost:3000,,"",images/nicole.jpg
+Monster,Monster,http://localhost:3100,,,https://ryanharveyauthor.com/wp-content/uploads/2018/09/clydeeghost.png

@@ -8,7 +8,6 @@
             [ring.middleware.file :refer [wrap-file]]
             [ring.util.codec :as codec]
             [ring.util.response :refer [content-type response]]
-            [ring.util.response :refer [response]]
             [utils.core]))
 
 (defonce ws-clients (atom #{}))
@@ -51,7 +50,7 @@
     (thread-with-speakers question)
     (response (json/generate-string {:answer question}))))
 
-(defn handle-state [req]
+(defn handle-state [_]
   (utils.core/mark-alive app-state)
   (-> app-state
       utils.core/deep-deref
@@ -79,7 +78,7 @@
     )
   )
 
-(defn handle-questions [req]
+(defn handle-questions [_]
   (->
     "questions.log"
     pyjama.utils/load-lines-of-file
@@ -87,13 +86,11 @@
     reverse
     json/generate-string
     response
-    (content-type "application/json")
-    ))
+    (content-type "application/json")))
 
 (defn handle-join [req]
   (let [body (slurp (:body req))
         json (json/parse-string body true)
-        ;_ (clojure.pprint/pprint json)
         new-atom (joining/load-one-philosopher json)
         ok? (try
               (swap! app-state update :people conj (joining/load-one-philosopher json))
@@ -132,6 +129,11 @@
         {:status 200 :body "true"})
       {:status 400 :body "false"})))
 
+(defn handle-stop [_]
+  (swap! app-state :chatting false)
+  {:status  200
+   :headers {"Content-Type" "text/html"}
+   :body    "stopped"})
 
 (defn app []
   (-> (fn [req]
@@ -142,7 +144,7 @@
           (= (:uri req) "/leave") (handle-leave req)
           (= (:uri req) "/chat") {:status  200
                                   :headers {"Content-Type" "text/html"}
-                                  :body    (slurp "public/v4/index.html")}
+                                  :body    (slurp "public/v4/chat.html")}
           (= (:uri req) "/ask") {:status  200
                                  :headers {"Content-Type" "text/html"}
                                  :body    (slurp "public/v4/ask.html")}
@@ -153,10 +155,10 @@
                                     :headers {"Content-Type" "text/html"}
                                     :body    (slurp "public/v4/people.html")}
           (= (:uri req) "/summary") (handle-summary req)
+          (= (:uri req) "/stop") (handle-stop req)
           (= (:uri req) "/questions") (handle-questions req)
-          (= (:uri req) "/question") (handle-question req)  ; New route to handle the POST request
+          (= (:uri req) "/question") (handle-question req)
           :else (do
-                  ;(swap! app-state assoc :chatting false)   ; TODO remove this
                   {:status  200
                    :headers {"Content-Type" "text/html"}
                    :body    (slurp "public/v4/welcome.html")})))

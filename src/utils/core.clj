@@ -1,7 +1,7 @@
 (ns utils.core
   (:require [clj-http.client :as http])
   (:import
-    (java.net Socket)
+    (java.net NetworkInterface Socket)
     (clojure.lang Atom)))
 
 (defn deep-deref [x]
@@ -50,3 +50,15 @@
     (swap! person-atom
            (fn [{:keys [url] :as person}]
              (assoc person :alive (url-alive? url))))))
+
+
+
+(defn get-non-local-ip []
+  (->> (NetworkInterface/getNetworkInterfaces)
+       (enumeration-seq)
+       (mapcat #(enumeration-seq (.getInetAddresses %)))
+       (filter #(and (not (.isLoopbackAddress %))
+                     (.isSiteLocalAddress %)))  ;; Filters non-local IPs
+       (map str)
+       first)) ;; Gets the first non-local IP
+(def get-local-ip get-non-local-ip)

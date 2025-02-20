@@ -5,6 +5,7 @@
             [clojure.tools.cli :refer [parse-opts]]
             [compojure.core :refer [POST defroutes]]
             [compojure.route :as route]
+            [utils.core :as utils]
             [ring.adapter.jetty :refer [run-jetty]]
             [ring.util.response :as response])
   (:import (java.net InetAddress NetworkInterface)
@@ -73,7 +74,7 @@
       (let [server (run-jetty (create-app handle-messages) {:host "0.0.0.0" :port port :join? false})
             assigned-port (-> server .getConnectors first (#(.getLocalPort %)))
             ; local-ip (get-non-local-ip)
-            local-ip (get-local-ip)
+            local-ip (utils/get-local-ip)
             ]
         (when (:server-url options)
           (register-handler (:server-url options) handler-name local-ip assigned-port (:avatar options)))))))

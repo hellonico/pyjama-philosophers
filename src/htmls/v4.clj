@@ -9,6 +9,7 @@
             [ring.middleware.file :refer [wrap-file]]
             [ring.util.codec :as codec]
             [ring.util.response :refer [content-type response]]
+            [utils.core :as utils]
             [utils.core]))
 
 (defonce ws-clients (atom #{}))
@@ -154,6 +155,12 @@
    :headers {"Content-Type" "text/html"}
    :body    "stopped"})
 
+(defn page [page-file]
+  {:status  200
+   :headers {"Content-Type" "text/html"}
+   :body    (-> (slurp page-file)
+                (clojure.string/replace "http://localhost:3001" (:host @app-state)))})
+
 (defn app []
   (-> (fn [req]
         (cond
@@ -162,30 +169,23 @@
           (= (:uri req) "/join") (handle-join req)
           (= (:uri req) "/leave") (handle-leave req)
           (= (:uri req) "/intervention") (handle-intervention req)
-          (= (:uri req) "/chat") {:status  200
-                                  :headers {"Content-Type" "text/html"}
-                                  :body    (slurp "public/v4/chat.html")}
-          (= (:uri req) "/ask") {:status  200
-                                 :headers {"Content-Type" "text/html"}
-                                 :body    (slurp "public/v4/ask.html")}
-          (= (:uri req) "/human") {:status  200
-                                   :headers {"Content-Type" "text/html"}
-                                   :body    (slurp "public/v4/human.html")}
-          (= (:uri req) "/people") {:status  200
-                                    :headers {"Content-Type" "text/html"}
-                                    :body    (slurp "public/v4/people.html")}
+          (= (:uri req) "/chat") (page "public/v4/chat.html")
+          (= (:uri req) "/ask") (page "public/v4/ask.html")
+          (= (:uri req) "/human") (page "public/v4/human.html")
+          (= (:uri req) "/people") (page "public/v4/people.html")
           (= (:uri req) "/summary") (handle-summary req)
           (= (:uri req) "/stop") (handle-stop req)
           (= (:uri req) "/questions") (handle-questions req)
           (= (:uri req) "/question") (handle-question req)
-          :else (do
-                  {:status  200
-                   :headers {"Content-Type" "text/html"}
-                   :body    (slurp "public/v4/welcome.html")})))
+          :else (page "public/v4/welcome.html")))
       (wrap-file "public")))
 
 (defn -main []
-  ; TODO : find IP (where is the code??)
-  (println "Starting server on http://localhost:3001")
-  (joining/load-people app-state "personalitiesv5.csv")
-  (http/run-server (app) {:host "0.0.0.0" :port 3001}))
+  (let [port 3001
+        ip (utils/get-local-ip)
+        host (str "http://" ip ":" port)
+        ]
+    (swap! app-state assoc :host host)
+    (println "Starting server on " host)
+    (joining/load-people app-state "personalitiesv5.csv")
+    (http/run-server (app) {:host "0.0.0.0" :port port})))

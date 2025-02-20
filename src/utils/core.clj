@@ -29,7 +29,6 @@
 
 (defn url-alive? [url]
   (try
-    (println url)
     (let [response (http/get url {:throw-exceptions false :timeout 2000})]
       ;(<= 200 (:status response) 399)
       true ; TODO: check response code later

@@ -1,6 +1,7 @@
 (ns htmls.v4
   (:require [cheshire.core :as json]
             [clojure.core.async :as async]
+            [clojure.string :as str]
             [org.httpkit.server :as http]
             [pyjama.games.joining :as joining]
             [pyjama.games.philosophersv4 :as v4]
@@ -52,6 +53,7 @@
 
 (defn handle-state [_]
   (utils.core/mark-alive app-state)
+  (clojure.pprint/pprint (map #(vector (:name @%) (:url @%) (:alive @%)) (:people @app-state)))
   (-> app-state
       utils.core/deep-deref
       json/generate-string
@@ -87,6 +89,23 @@
     json/generate-string
     response
     (content-type "application/json")))
+
+(defn handle-intervention [req]
+  (let [
+        body (slurp (:body req))
+        json (json/parse-string body true)
+
+        image (or (:image json) "images/UFO.jpg")
+        shout? (or (:shout json) false)
+        human-name (or (:name json) "Intervention")
+        human-message (or (:message json) "I think humans will win. AI is going to be forgotten.")
+        content (str human-name " says " human-message)
+        content (if shout? (str/upper-case content) content)
+        broadcast-msg {:image image :position :left :name human-name :text content}
+        ]
+    (clojure.pprint/pprint broadcast-msg)
+    (v4/tell-everybody-else (:people @app-state) nil {:role :user :content content})
+    (broadcast! broadcast-msg)))
 
 (defn handle-join [req]
   (let [body (slurp (:body req))
@@ -142,6 +161,7 @@
           (= (:uri req) "/state") (handle-state req)
           (= (:uri req) "/join") (handle-join req)
           (= (:uri req) "/leave") (handle-leave req)
+          (= (:uri req) "/intervention") (handle-intervention req)
           (= (:uri req) "/chat") {:status  200
                                   :headers {"Content-Type" "text/html"}
                                   :body    (slurp "public/v4/chat.html")}
@@ -165,6 +185,7 @@
       (wrap-file "public")))
 
 (defn -main []
+  ; TODO : find IP (where is the code??)
   (println "Starting server on http://localhost:3001")
   (joining/load-people app-state "personalitiesv5.csv")
   (http/run-server (app) {:host "0.0.0.0" :port 3001}))

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intervention Form</title>
+    <style>
+        body {
+            background: #0a0a0a;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
+
+        form {
+            background: rgba(20, 20, 40, 0.9);
+            padding: 30px; /* Increased padding for more space */
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+            display: inline-block;
+            max-width: 400px;
+            width: 90%; /* Make sure it adapts well on smaller screens */
+        }
+
+        label {
+            font-size: 18px;
+            display: block;
+            margin: 15px 0 5px; /* More vertical spacing */
+        }
+
+        input[type="text"], textarea {
+            width: calc(100% - 20px); /* Ensures it fits well inside */
+            padding: 12px; /* More padding for better spacing */
+            margin-bottom: 10px; /* Extra space between fields */
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid cyan;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            border-color: white;
+            box-shadow: 0 0 10px cyan;
+        }
+
+        textarea {
+            height: 120px; /* Slightly taller for better readability */
+            resize: none;
+        }
+
+        input[type="checkbox"] {
+            accent-color: cyan;
+            transform: scale(1.3);
+            margin-right: 5px;
+        }
+
+        div img {
+            width: 100px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin: 10px; /* Add spacing around images */
+        }
+
+        div img:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px cyan;
+        }
+
+        button {
+            background: linear-gradient(135deg, #0d47a1, #1976d2);
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            padding: 15px 25px; /* Bigger button for easier interaction */
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.3s;
+            text-transform: uppercase;
+            margin-top: 20px; /* More space above button */
+        }
+
+        button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px cyan;
+        }
+
+
+    </style>
+</head>
+<body>
+<form id="interventionForm">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required><br><br>
+
+    <label for="message">Message:</label>
+    <textarea id="message" name="message" required></textarea><br><br>
+
+    <label>
+        <input type="checkbox" id="shout" name="shout">
+        Shout
+    </label><br><br>
+
+    <label for="image">Image:</label>
+    <input type="text" id="image" name="image" readonly>
+    <br><br>
+
+    <div>
+        <img src="images/UFO.jpg" alt="UFO" width="100" onclick="selectImage('images/UFO.jpg')">
+        <img src="images/inter.png" alt="Inter" width="100" onclick="selectImage('images/inter.png')">
+    </div>
+    <br>
+
+    <button type="submit">Intervention</button>
+</form>
+
+<script>
+    function selectImage(imagePath) {
+        document.getElementById('image').value = imagePath;
+    }
+
+    document.getElementById('interventionForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const formData = {
+            name: document.getElementById('name').value,
+            message: document.getElementById('message').value,
+            shout: document.getElementById('shout').checked,
+            image: document.getElementById('image').value
+        };
+
+        fetch('http://localhost:3001/intervention', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+            .then(response => response.json())
+            .then(data => console.log('Success:', data))
+            .catch(error => console.error('Error:', error));
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Display</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+
+    /* Set full black background */
+    body {
+      background: black;
+      font-family: 'Orbitron', sans-serif;
+      color: #0ff;
+    }
+
+    /* Chat container */
+    .chat-container {
+      width: 80%;
+      /*max-width: 800px;*/
+      height: 500px;
+      overflow-y: auto;
+      margin: 40px auto;
+      padding: 20px;
+      border: 2px solid #0ff;
+      background: rgba(0, 0, 0, 0.9);
+      box-shadow: 0 0 20px #00f;
+      border-radius: 10px;
+    }
+
+    /* Message styling */
+    .message {
+      display: flex;
+      align-items: center;
+      margin: 15px 0;
+      max-width: 80%;
+      padding: 10px;
+      border-radius: 10px;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    /* Sent messages (align right) */
+    .message.sent {
+      justify-content: flex-end;
+    }
+
+    /* Received messages (align left) */
+    .message.received {
+      justify-content: flex-start;
+    }
+
+    /* Avatar */
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid #0ff;
+      margin-right: 10px;
+      box-shadow: 0 0 10px #0ff;
+    }
+
+    /* Message bubble */
+    .bubble {
+      padding: 12px 15px;
+      border-radius: 10px;
+      font-size: 17px;
+      transition: transform 0.2s ease-in-out;
+    }
+
+    /* Sent message bubble */
+    .sent .bubble {
+      background: #0ff;
+      color: black;
+      box-shadow: 0 0 10px #0ff;
+      text-shadow: none; /* Removed blue glow */
+    }
+
+    /* Received message bubble */
+    .received .bubble {
+      background: #111;
+      color: #0ff;
+      border: 2px solid #0ff;
+      text-shadow: none; /* Removed extra glow */
+    }
+
+    /* Hover effect */
+    .bubble:hover {
+      transform: scale(1.05);
+    }
+
+    /* Fade-in effect */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+  </style>
+</head>
+<body>
+
+<div id="chat-container" class="chat-container"></div>
+
+<script>
+  // Function to render messages
+  function renderMessages(messages, people) {
+    const chatContainer = document.getElementById('chat-container');
+
+    messages.forEach((message, index) => {
+      const sender = people.find(person => person.name === message.name);
+
+      const messageDiv = document.createElement('div');
+      messageDiv.classList.add('message', index % 2 === 0 ? 'sent' : 'received');
+
+      const avatarImg = document.createElement('img');
+      avatarImg.src = sender.avatar;
+      avatarImg.alt = sender.name;
+      avatarImg.classList.add('avatar');
+
+      const bubbleDiv = document.createElement('div');
+      bubbleDiv.classList.add('bubble');
+      bubbleDiv.textContent = message.content;
+
+      messageDiv.appendChild(avatarImg);
+      messageDiv.appendChild(bubbleDiv);
+      chatContainer.appendChild(messageDiv);
+    });
+  }
+
+  // Fetch data from the server
+  fetch('http://localhost:3001/state')
+          .then(response => response.json()) // Parse the response as JSON
+          .then(data => {
+            // Render the messages and people data
+            renderMessages(data.messages, data.people);
+          })
+          .catch(error => {
+            console.error('Error fetching data:', error);
+          });
+</script>
+
+</body>
+</html>

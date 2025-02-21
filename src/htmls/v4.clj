@@ -176,6 +176,7 @@
           (= (:uri req) "/chat") (page "public/v4/chat.html")
           (= (:uri req) "/ask") (page "public/v4/ask.html")
           (= (:uri req) "/human") (page "public/v4/human.html")
+          (= (:uri req) "/history") (page "public/v4/history.html")
           (= (:uri req) "/people") (page "public/v4/people.html")
           (= (:uri req) "/summary") (handle-summary req)
           (= (:uri req) "/stop") (handle-stop req)

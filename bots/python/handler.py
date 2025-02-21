@@ -4,6 +4,7 @@ from datetime import datetime
 name = "Python"
 avatar = "https://i.pinimg.com/736x/28/17/e1/2817e11cb843de716180346af96b0a0b.jpg"
 port = 8080
+SYSTEM = "Hello I am Python"
 
 def handle_request(data):
     """

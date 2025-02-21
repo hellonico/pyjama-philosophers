@@ -13,7 +13,7 @@ handler = importlib.import_module("handler")
 NAME = getattr(handler, "name", "DefaultName")
 AVATAR = getattr(handler, "avatar", "http://example.com/avatar.png")
 PORT = getattr(handler, "port", 8080)
-
+SYSTEM = getattr(handler, "system", "I am the scary python")
 
 def get_local_ip():
     """Retrieve the local network IP address (LAN IP)"""
@@ -38,7 +38,8 @@ def send_initial_post(remote_server, ip):
             "name": NAME,
             "url": f"http://{ip}:{PORT}",
             "avatar": AVATAR,
-            "model": "llama3.1"
+            "model": "llama3.1",
+            "system": SYSTEM,
         }
 
         print(f"Sending initial POST to {remote_server}/join with data: {json.dumps(data)}")

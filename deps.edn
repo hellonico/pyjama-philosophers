@@ -17,7 +17,7 @@
              "--server-url" "http://localhost:3001"
              "--avatar" "images/nico.jpg"
              ]}
-  :echo   {:main-opts
+  :echo    {:main-opts
             ["-m" "pyjama.games.handlers.core"
              "--handler" "pyjama.games.handlers.echo/handler"
              "--port" "0"
@@ -45,7 +45,7 @@
   org.clojure/data.csv    {:mvn/version "1.1.0"}
 
   ring/ring               {:mvn/version "1.13.0"}
-  ring-cors/ring-cors {:mvn/version "0.1.13"}
+  ring-cors/ring-cors     {:mvn/version "0.1.13"}
   compojure/compojure     {:mvn/version "1.7.1"}
   http-kit/http-kit       {:mvn/version "2.6.0"}
   ring/ring-jetty-adapter {:mvn/version "1.9.6"}

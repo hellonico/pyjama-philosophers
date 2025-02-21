@@ -1,15 +1,13 @@
-use std::net::{IpAddr, Ipv4Addr, TcpListener};
-use std::io::{Read, Write};
-use std::sync::Arc;
-use std::thread;
-use serde::{Deserialize, Serialize};
 use reqwest::blocking::Client;
-use std::time::SystemTime;
+use serde::{Deserialize, Serialize};
 use std::env;
+use std::io::{Read, Write};
+use std::net::{Ipv4Addr, TcpListener};
+use std::thread;
 
 use bot::handler;
 // use bot::handler;
-use handler::{NAME, AVATAR, PORT, handle_request};
+use handler::{handle_request, AVATAR, NAME, PORT};
 
 #[derive(Serialize, Deserialize)]
 struct JoinData {
@@ -34,12 +32,17 @@ fn send_initial_post(remote_server: &str, ip: &str) {
         model: "llama3.1",
     };
 
-    if let Err(e) = client.post(&format!("http://{}/join", remote_server))
+    if let Err(e) = client
+        .post(&format!("http://{}/join", remote_server))
         .json(&data)
         .send()
     {
         eprintln!("Error sending initial POST request: {}", e);
     }
+}
+
+pub fn health_check() -> String {
+    "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 2\r\n\r\nOK".to_string()
 }
 
 fn handle_client(mut stream: std::net::TcpStream) {
@@ -49,7 +52,8 @@ fn handle_client(mut stream: std::net::TcpStream) {
 
         if request.starts_with("POST ") {
             let body_start = request.find("\r\n\r\n").unwrap_or(request.len()) + 4;
-            if let Ok(json_data) = serde_json::from_str::<serde_json::Value>(&request[body_start..]) {
+            if let Ok(json_data) = serde_json::from_str::<serde_json::Value>(&request[body_start..])
+            {
                 let response_data = handle_request(json_data);
                 let response_json = serde_json::to_string(&response_data).unwrap();
 
@@ -60,6 +64,9 @@ fn handle_client(mut stream: std::net::TcpStream) {
 
                 stream.write_all(response.as_bytes()).unwrap();
             }
+        }
+        if request.starts_with("GET ") {
+            stream.write_all(health_check().as_bytes()).unwrap()
         }
     }
 }

@@ -3,7 +3,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 
 pub const NAME: &str = "Rust";
 pub const AVATAR: &str = "https://i.pinimg.com/736x/28/17/e1/2817e11cb843de716180346af96b0a0b.jpg";
-pub const PORT: u16 = 8080;
+pub const PORT: u16 = 8081;
 
 #[derive(Serialize, Deserialize)]
 pub struct ResponseMessage {

@@ -106,6 +106,9 @@
         content (if shout? (str/upper-case content) content)
         broadcast-msg {:image image :position :left :name human-name :text content}
         ]
+
+    (swap! app-state update :messages conj
+           {:name human-name :role :human :content content})
     (clojure.pprint/pprint broadcast-msg)
     (v4/tell-everybody-else (:people @app-state) nil {:role :user :content content})
     (broadcast! broadcast-msg)))

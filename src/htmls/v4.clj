@@ -2,6 +2,8 @@
   (:require [cheshire.core :as json]
             [clojure.core.async :as async]
             [clojure.string :as str]
+            [compojure.core :refer [DELETE GET POST defroutes]]
+            [compojure.route :as route]
             [org.httpkit.server :as http]
             [pyjama.games.joining :as joining]
             [pyjama.games.philosophersv4 :as v4]
@@ -161,35 +163,50 @@
    :body    "stopped"})
 
 (defn page [page-file]
-  {:status  200
-   :headers {"Content-Type" "text/html"}
-   :body    (-> (slurp page-file)
-                (clojure.string/replace "http://localhost:3001" (:host @app-state)))})
+  (fn [_]
+    (let [content (slurp page-file)]
+      {:status  200
+       :headers {"Content-Type" "text/html"}
+       :body    (str/replace content "http://localhost:3001" (:host @app-state))})))
+
+
+(defroutes
+  app-routes
+  (GET "/ws" [] ws-handler)
+
+  ; json
+  (GET "/state" [] handle-state)
+  (POST "/question" [] handle-question)
+
+  (POST "/join" [] handle-join)
+  (POST "/intervention" [] handle-intervention)
+  (POST "/summary" [] handle-summary)
+  (POST "/stop" [] handle-stop)
+  (GET "/questions" [] handle-questions)
+
+  (DELETE "/leave" [] handle-leave)
+
+  ; html
+  (GET "/current" [] (page "public/v4/current.html"))
+  (GET "/chat" [] (page "public/v4/chat.html"))
+  (GET "/ask" [] (page "public/v4/ask.html"))
+  (GET "/human" [] (page "public/v4/human.html"))
+  (GET "/history" [] (page "public/v4/history.html"))
+  (GET "/people" [] (page "public/v4/people.html"))
+  (GET "/" [] (page "public/v4/welcome.html"))
+
+  (route/not-found (page "public/v4/notfound.html"))
+
+  )
 
 (defn app []
-  (-> (fn [req]
-        (cond
-          (= (:uri req) "/ws") (ws-handler req)
-          (= (:uri req) "/state") (handle-state req)
+  (-> app-routes
+      (wrap-file "public")
+      (wrap-cors
+        :access-control-allow-origin [#".*"]
+        :access-control-allow-methods [:get :post :put :delete :options]
+        :access-control-allow-headers ["Content-Type" "Authorization"])))
 
-          (= (:uri req) "/join") (handle-join req)
-          (= (:uri req) "/leave") (handle-leave req)
-          (= (:uri req) "/intervention") (handle-intervention req)
-          (= (:uri req) "/current") (page "public/v4/current.html")
-          (= (:uri req) "/chat") (page "public/v4/chat.html")
-          (= (:uri req) "/ask") (page "public/v4/ask.html")
-          (= (:uri req) "/human") (page "public/v4/human.html")
-          (= (:uri req) "/history") (page "public/v4/history.html")
-          (= (:uri req) "/people") (page "public/v4/people.html")
-          (= (:uri req) "/summary") (handle-summary req)
-          (= (:uri req) "/stop") (handle-stop req)
-          (= (:uri req) "/questions") (handle-questions req)
-          (= (:uri req) "/question") (handle-question req)
-          :else (page "public/v4/welcome.html")))
-      (wrap-cors :access-control-allow-origin [#".*"]       ;; Allow all origins
-                 :access-control-allow-methods [:get :post :put :delete :options]
-                 :access-control-allow-headers ["Content-Type" "Authorization"])
-      (wrap-file "public")))
 
 (defn -main []
   (let [port 3001

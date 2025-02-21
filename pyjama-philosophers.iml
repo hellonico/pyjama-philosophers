@@ -38,6 +38,7 @@
     <orderEntry type="library" name="Deps: org.clojure/tools.analyzer.jvm:1.2.2" level="project" />
     <orderEntry type="library" name="Deps: org.apache.commons/commons-math3:3.6.1" level="project" />
     <orderEntry type="library" name="Deps: org.clojure/tools.macro:0.1.5" level="project" />
+    <orderEntry type="library" name="Deps: ring-cors:0.1.13" level="project" />
     <orderEntry type="library" name="Deps: com.fasterxml.jackson.dataformat/jackson-dataformat-cbor:2.13.3" level="project" />
     <orderEntry type="library" name="Deps: org.apache.lucene/lucene-analyzers-common:4.2.0" level="project" />
     <orderEntry type="library" name="Deps: org.apache.pdfbox/pdfbox:2.0.30" level="project" />

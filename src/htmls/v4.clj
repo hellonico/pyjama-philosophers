@@ -6,6 +6,7 @@
             [pyjama.games.joining :as joining]
             [pyjama.games.philosophersv4 :as v4]
             [pyjama.utils]
+            [ring.middleware.cors :refer [wrap-cors]]
             [ring.middleware.file :refer [wrap-file]]
             [ring.util.codec :as codec]
             [ring.util.response :refer [content-type response]]
@@ -26,6 +27,7 @@
 
 (def app-state
   (atom {:lag      5000
+         :messages []
          :battle-message
          "This is a conversation battle. Everyone should chat, with simple, very very short, witty answers.
                               May the most intelligent win. "
@@ -150,7 +152,7 @@
       {:status 400 :body "false"})))
 
 (defn handle-stop [_]
-  (swap! app-state :chatting false)
+  (swap! app-state assoc :chatting false)
   {:status  200
    :headers {"Content-Type" "text/html"}
    :body    "stopped"})
@@ -166,9 +168,11 @@
         (cond
           (= (:uri req) "/ws") (ws-handler req)
           (= (:uri req) "/state") (handle-state req)
+
           (= (:uri req) "/join") (handle-join req)
           (= (:uri req) "/leave") (handle-leave req)
           (= (:uri req) "/intervention") (handle-intervention req)
+          (= (:uri req) "/current") (page "public/v4/current.html")
           (= (:uri req) "/chat") (page "public/v4/chat.html")
           (= (:uri req) "/ask") (page "public/v4/ask.html")
           (= (:uri req) "/human") (page "public/v4/human.html")
@@ -178,6 +182,9 @@
           (= (:uri req) "/questions") (handle-questions req)
           (= (:uri req) "/question") (handle-question req)
           :else (page "public/v4/welcome.html")))
+      (wrap-cors :access-control-allow-origin [#".*"]       ;; Allow all origins
+                 :access-control-allow-methods [:get :post :put :delete :options]
+                 :access-control-allow-headers ["Content-Type" "Authorization"])
       (wrap-file "public")))
 
 (defn -main []

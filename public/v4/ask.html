@@ -7,34 +7,133 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="../white.css">
     <style>
         body {
-            font-size: 20pt;
+            font-family: 'Orbitron', sans-serif;
+            background: #0d0d0d;
+            color: #00ffcc;
+            text-align: center;
+            padding: 20px;
         }
-        #loading {
-            display: none;
+
+        h1 {
+            font-size: 36px;
+            text-transform: uppercase;
+            color: #00ffcc;
+            text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ff99;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .left-panel, .right-panel {
+            width: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.6);
+        }
+
+        button {
+            background: linear-gradient(45deg, #0044ff, #00ccff);
+            color: white;
             font-size: 16px;
             font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0, 204, 255, 0.8);
+            transition: all 0.3s ease-in-out;
+            margin: 10px;
         }
+
+        button:hover {
+            background: linear-gradient(45deg, #0077ff, #33ddff);
+            box-shadow: 0 0 25px rgba(0, 255, 255, 1);
+            transform: scale(1.05);
+        }
+
+        button:active {
+            transform: scale(0.95);
+            box-shadow: 0 0 10px rgba(0, 204, 255, 1);
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #00ffcc;
+            color: #00ffcc;
+            font-size: 16px;
+            padding: 10px;
+            border-radius: 5px;
+            resize: vertical;
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.6);
+        }
+
+        textarea::placeholder {
+            color: rgba(0, 255, 204, 0.5);
+        }
+
+        #loading {
+            font-size: 18px;
+            color: #ffcc00;
+            text-shadow: 0 0 10px #ffcc00, 0 0 20px #ffaa00;
+            margin-top: 20px;
+        }
+
+        #response {
+            font-family: "Orbitron", sans-serif; /* Futuristic font */
+            font-size: 20px;
+            color: #0ff; /* Neon cyan */
+            background: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
+            padding: 15px;
+            border: 2px solid #0ff; /* Neon border */
+            border-radius: 10px;
+            margin-top: 10px;
+            min-height: 50px; /* Ensures it's visible even when empty */
+            text-shadow: 0 0 5px #0ff, 0 0 10px #00f;
+            animation: glow 1.5s infinite alternate;
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px #0ff, 0 0 10px #00f; }
+            100% { box-shadow: 0 0 10px #0ff, 0 0 20px #00f; }
+        }
+
+
     </style>
 </head>
 <body>
-<button onclick="sendRequest('Summarize the conversation')">Summarize the conversation</button>
-<button onclick="sendRequest('What is the most disruptive thought')">What is the most disruptive thought</button>
-<button onclick="sendRequest('Who is the most disruptive speaker')">Who is the most disruptive speaker</button>
+<h1>Psychoanalysis</h1>
+<div class="container">
+    <div class="left-panel">
+        <button onclick="sendRequest('Summarize the conversation')">Summarize the conversation</button>
+        <button onclick="sendRequest('What is the most disruptive thought')">What is the most disruptive thought</button>
+        <button onclick="sendRequest('Who is the most disruptive speaker')">Who is the most disruptive speaker</button>
+    </div>
 
-<br><br>
-<textarea id="customQuestion" placeholder="Enter your question"></textarea>
-<button onclick="sendCustomRequest()">Submit</button>
-
-
+    <div class="right-panel">
+        <textarea id="customQuestion" placeholder="Enter your question"></textarea>
+        <button onclick="sendCustomRequest()">Submit</button>
+    </div>
+</div>
 
 <br><br>
 <div id="loading">Thinking...</div>
 <div id="response"></div>
 
 <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("loading").style.display = "none"; // Hide on page load
+    });
+
     function sendRequest(question) {
         document.getElementById('loading').style.display = 'block';
         document.getElementById('response').innerText = '';

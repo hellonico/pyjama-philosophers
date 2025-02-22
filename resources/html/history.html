@@ -114,13 +114,16 @@
       messageDiv.classList.add('message', index % 2 === 0 ? 'sent' : 'received');
 
       const avatarImg = document.createElement('img');
-      avatarImg.src = sender.avatar;
-      avatarImg.alt = sender.name;
-      avatarImg.classList.add('avatar');
+      if (sender!=null) {
+        avatarImg.src = sender.avatar;
+        avatarImg.alt = sender.name;
+        avatarImg.classList.add('avatar');
+      }
 
       const bubbleDiv = document.createElement('div');
       bubbleDiv.classList.add('bubble');
       bubbleDiv.textContent = message.content;
+      console.log(message.content);
 
       messageDiv.appendChild(avatarImg);
       messageDiv.appendChild(bubbleDiv);

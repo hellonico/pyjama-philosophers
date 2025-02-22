@@ -6,7 +6,7 @@ require_relative 'handler'
 
 NAME = Handler::NAME || "DefaultName"
 AVATAR = Handler::AVATAR || "http://example.com/avatar.png"
-PORT = Handler::PORT || 8080
+PORT = Handler::PORT || 8020
 SYSTEM = Handler::SYSTEM || "Hello, I am ruby"
 
 # Retrieve the local network IP address

@@ -107,12 +107,12 @@
         content (str human-name " says " human-message)
         content (if shout? (str/upper-case content) content)
         broadcast-msg {:image image :position :left :name human-name :text content}
+        new-msg {:name human-name :role :human :content content}
         ]
 
-    (swap! app-state update :messages conj
-           {:name human-name :role :human :content content})
-    (clojure.pprint/pprint broadcast-msg)
-    (v4/tell-everybody-else (:people @app-state) nil {:role :user :content content})
+    (swap! app-state update :messages conj new-msg)
+    (clojure.pprint/pprint new-msg)
+    (v4/tell-everybody-else (:people @app-state) nil new-msg)
     (broadcast! broadcast-msg)))
 
 (defn handle-join [req]
@@ -120,7 +120,7 @@
         json (json/parse-string body true)
         new-atom (joining/load-one-philosopher json)
         ok? (try
-              (swap! app-state update :people conj (joining/load-one-philosopher json))
+              (swap! app-state update :people conj new-atom)
               true
               (catch Exception e
                 (do
@@ -132,9 +132,7 @@
             (do (println (:name json) " has joined.")
                 (v4/tell-everybody-else (:people @app-state) new-atom {:role :user :content (str (:name " has joined"))}))
             (println (:name json) " failed to joined."))
-        http-res {:status  200
-                  :headers {"Content-Type" "text/plain"}
-                  :body    ok?}
+        http-res {:body    ok?}
         ]
     (-> (json/generate-string http-res)
         response

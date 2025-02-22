@@ -6,33 +6,7 @@
  :aliases
 
  {
-  :v3      {:main-opts ["-m" "htmls.v3"]}
-  :v4      {:main-opts ["-m" "htmls.v4"]}
-
-  :human   {:main-opts
-            ["-m" "pyjama.games.handlers.core"
-             "--handler" "pyjama.games.handlers.human/handler"
-             "--port" "0"
-             "--name" "Nico"
-             "--server-url" "http://localhost:3001"
-             "--avatar" "images/nico.jpg"
-             ]}
-  :echo    {:main-opts
-            ["-m" "pyjama.games.handlers.core"
-             "--handler" "pyjama.games.handlers.echo/handler"
-             "--port" "0"
-             "--name" "Echo"
-             "--server-url" "http://localhost:3001"
-             "--avatar" "images/echo.jpg"
-             ]}
-  :piporag {:main-opts
-            ["-m" "pyjama.games.handlers.core"
-             "--handler" "pyjama.games.handlers.piporag/handler"
-             "--port" "0"
-             "--name" "Clyde"
-             "--server-url" "http://localhost:3001"
-             "--avatar" "https://www.giantbomb.com/a/uploads/scale_small/8/87790/2469744-pinky.png"
-             ]}
+  :web      {:main-opts ["-m" "pyjama.games.web"]}
   }
 
  :deps

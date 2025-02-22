@@ -1,4 +1,4 @@
-(ns htmls.v4
+(ns pyjama.games.web
   (:require [cheshire.core :as json]
             [clojure.core.async :as async]
             [clojure.string :as str]
@@ -35,7 +35,7 @@
                               May the most intelligent win. "
          :chatting false}))
 
-(defn thread-with-speakers [question]
+(defn start-chat-thread [question]
   (async/thread
     (swap! app-state assoc
            :messages []
@@ -53,7 +53,7 @@
         question (:question json)]
     (println "Received question:" question)
     (spit "questions.log" (str question "\n") :append true)
-    (thread-with-speakers question)
+    (start-chat-thread question)
     (response (json/generate-string {:answer question}))))
 
 (defn handle-state [_]
@@ -146,7 +146,6 @@
         name (get params "name")
         _ (println name)
         people (:people @app-state)
-        ;_ (println people)
         find? (some #(= (:name (deref %)) name) people)
         _ (println find?)
         ]
@@ -162,13 +161,12 @@
    :headers {"Content-Type" "text/html"}
    :body    "stopped"})
 
-(defn page [page-file]
+(defn- page [page-file]
   (fn [_]
-    (let [content (slurp page-file)]
+    (let [content (slurp (str "resources/html/" page-file))]
       {:status  200
        :headers {"Content-Type" "text/html"}
        :body    (str/replace content "http://localhost:3001" (:host @app-state))})))
-
 
 (defroutes
   app-routes
@@ -187,15 +185,15 @@
   (DELETE "/leave" [] handle-leave)
 
   ; html
-  (GET "/current" [] (page "public/v4/current.html"))
-  (GET "/chat" [] (page "public/v4/chat.html"))
-  (GET "/ask" [] (page "public/v4/ask.html"))
-  (GET "/human" [] (page "public/v4/human.html"))
-  (GET "/history" [] (page "public/v4/history.html"))
-  (GET "/people" [] (page "public/v4/people.html"))
-  (GET "/" [] (page "public/v4/welcome.html"))
+  (GET "/current" [] (page "current.html"))
+  (GET "/chat" [] (page "chat.html"))
+  (GET "/ask" [] (page "ask.html"))
+  (GET "/human" [] (page "human.html"))
+  (GET "/history" [] (page "history.html"))
+  (GET "/people" [] (page "people.html"))
+  (GET "/" [] (page "welcome.html"))
 
-  (route/not-found (page "public/v4/notfound.html"))
+  (route/not-found (page "notfound.html"))
 
   )
 
@@ -215,5 +213,5 @@
         ]
     (swap! app-state assoc :host host)
     (println "Starting server on " host)
-    (joining/load-people app-state "personalitiesv5.csv")
+    (joining/load-people app-state "csv/personalitiesv5.csv")
     (http/run-server (app) {:host "0.0.0.0" :port port})))

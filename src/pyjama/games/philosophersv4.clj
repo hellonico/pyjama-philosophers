@@ -3,18 +3,8 @@
   (:require
     [clojure.pprint]
     [clojure.tools.cli]
+    [pyjama.games.strategy]
     [pyjama.state]))
-
-(defn random-robin [app-state last-speaker-name]
-  (let [
-        all-people (:people @app-state)
-        ;_ (clojure.pprint/pprint all-people)
-        available (remove #(or
-                             (and (contains? (deref %) :alive) (= false (:alive (deref %))))
-                             (= last-speaker-name (:name (deref %)))) all-people)
-        _ (println "Available to speak:" (map #(:name (deref %)) available))
-        ]
-    (rand-nth available)))
 
 (defn tell-everybody-else [states current-speaker new-message]
   (doseq [state states]
@@ -35,7 +25,7 @@
 
       (when (and (pos? remaining-turns) (:chatting @app-state))
         (let [
-              speaker-atom (random-robin app-state last-speaker-name)
+              speaker-atom (pyjama.games.strategy/select-speaker app-state last-speaker-name)
               speaker (:name @speaker-atom)
               position (rand-nth [:left :right])
               ]
@@ -67,13 +57,11 @@
             (if (:chatting @app-state)
               (do
                 (broadcast-fn {:image (:avatar @speaker-atom) :position position :name speaker :text (:content last-response)})
-                (Thread/sleep ^long (:lag @app-state))
-                (tell-everybody-else states speaker-atom formatted-response))))
+                (tell-everybody-else states speaker-atom formatted-response)
+                (Thread/sleep ^long (:lag @app-state)))))
 
           (recur (dec remaining-turns) speaker))))
 
     (broadcast-fn {:image "/images/end.png"
                    :name  ""
-                   :text  "This battle has finished"})
-
-    ))
+                   :text  "This battle has finished"})))

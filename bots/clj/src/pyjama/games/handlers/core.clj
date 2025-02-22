@@ -3,7 +3,7 @@
             [clj-http.client :as http]
             [clojure.string :as str]
             [clojure.tools.cli :refer [parse-opts]]
-            [compojure.core :refer [POST defroutes]]
+            [compojure.core :refer [POST GET defroutes]]
             [compojure.route :as route]
             [utils.core :as utils]
             [ring.adapter.jetty :refer [run-jetty]]
@@ -35,6 +35,7 @@
 
 (defn create-app [handle-messages]
   (defroutes app-routes
+             (GET "/" request {:status  200})
              (POST "/api/chat" request (handle-request handle-messages request))
              (route/not-found "Not Found"))
   app-routes)
@@ -54,7 +55,7 @@
 (def get-local-ip get-non-local-ip)
 
 (defn register-handler [server-url name local-ip port avatar]
-  (let [endpoint (str "http://" local-ip ":" port)
+  (let [endpoint (str "http:/" local-ip ":" port)
         payload {:name name :url endpoint :avatar avatar}]
     (println "Registering handler to" server-url "with data:" payload)
     (http/post (str server-url "/join")

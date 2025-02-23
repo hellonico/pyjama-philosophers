@@ -7,7 +7,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&family=Snippet&display=swap"
           rel="stylesheet">
-    <link rel="stylesheet" href="../future.css">
+    <link rel="stylesheet" href="/future.css">
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+    <script src="/3d.js"></script>
     <title>Philo BattleGround</title>
     <script src="/quick.js"></script>
     <style>
@@ -130,21 +132,26 @@
         }
 
         // Create image & speaker container
-        const imageContainer = document.createElement("div");
-        imageContainer.classList.add("image-container");
 
-        const img = document.createElement("img");
-        img.style.display = "none";
+        const imageContainer = document.createElement("div");
 
         if (data.image) {
-            img.src = data.image;
-            img.style.display = "block";
+            if (data.image.endsWith('.glb')) {
+                // imageContainer.classList.add("modelContainer");
+                addModelViewerToContainer(imageContainer, data.image)
+            } else {
+                const img = document.createElement("img");
+                img.style.display = "none";
+                img.src = data.image;
+                img.style.display = "block";
+                imageContainer.appendChild(img);
+            }
+
         }
 
         const speaker = document.createElement("pre");
         speaker.textContent = data.name;
 
-        imageContainer.appendChild(img);
         imageContainer.appendChild(speaker); // Name goes directly below image
 
         // Create text container

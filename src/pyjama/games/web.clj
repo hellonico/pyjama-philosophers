@@ -190,6 +190,7 @@
   (GET "/history" [] (page "history.html"))
   (GET "/people" [] (page "people.html"))
   (GET "/" [] (page "welcome.html"))
+  (GET "/3d" [] (page "3d.html"))
 
   (route/not-found (page "notfound.html"))
 

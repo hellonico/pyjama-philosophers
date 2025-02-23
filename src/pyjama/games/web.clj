@@ -28,7 +28,11 @@
       (http/send! client json-msg))))
 
 (def app-state
-  (atom {:lag      5000
+  (atom {:lag      {
+                    :last     0
+                    :strategy :fixed
+                    :params   [5000]
+                    }
          :messages []
          :battle-message
          :strategy :length-weighted-random
@@ -133,7 +137,7 @@
             (do (println (:name json) " has joined.")
                 (v4/tell-everybody-else (:people @app-state) new-atom {:role :user :content (str (:name " has joined"))}))
             (println (:name json) " failed to joined."))
-        http-res {:body    ok?}
+        http-res {:body ok?}
         ]
     (-> (json/generate-string http-res)
         response

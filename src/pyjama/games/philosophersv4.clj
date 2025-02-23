@@ -4,6 +4,7 @@
     [clojure.pprint]
     [clojure.tools.cli]
     [pyjama.games.strategy]
+    [pyjama.games.waiting]
     [pyjama.state]))
 
 (defn tell-everybody-else [states current-speaker new-message]
@@ -58,7 +59,13 @@
               (do
                 (broadcast-fn {:image (:avatar @speaker-atom) :position position :name speaker :text (:content last-response)})
                 (tell-everybody-else states speaker-atom formatted-response)
-                (Thread/sleep ^long (:lag @app-state)))))
+                (let [
+                      wait-config (-> @app-state :lag)
+                      wait-time (pyjama.games.waiting/get-wait-time wait-config last-response)]
+                  (swap! app-state assoc-in [:lag :last] wait-time)
+                  (Thread/sleep ^long wait-time))
+
+                )))
 
           (recur (dec remaining-turns) speaker))))
 

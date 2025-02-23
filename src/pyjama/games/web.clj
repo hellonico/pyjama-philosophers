@@ -31,6 +31,7 @@
   (atom {:lag      5000
          :messages []
          :battle-message
+         :strategy :length-weighted-random
          "This is a conversation battle. Everyone should chat, with simple, very very short, witty answers.
                               May the most intelligent win. "
          :chatting false}))

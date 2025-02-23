@@ -117,6 +117,26 @@
         available (filter-available-speakers app-state nil)]
     (rand-nth (filter #(some recent-phrases (set (str/split (:last-message (deref %)) #"\s+"))) available))))
 
+(defn length-weighted-random [app-state _]
+  "Reduces the probability of selecting speakers who tend to write long messages."
+  (let [messages (:messages @app-state)
+        available (filter-available-speakers app-state nil)
+        avg-lengths (reduce
+                      (fn [acc {:keys [speaker-name content]}]
+                        (update acc speaker-name (fnil #(conj % (count content)) [])))
+                      {} messages)
+        avg-lengths (into {} (map (fn [[k v]] [k (/ (reduce + v) (count v))]) avg-lengths))
+        max-length (apply max (vals avg-lengths))
+        weights (map (fn [speaker]
+                       (let [name (:name (deref speaker))
+                             length (get avg-lengths name 1) ;; Default 1 if no messages
+                             weight (/ (- max-length length) (inc max-length))] ;; Inverse proportion
+                         {:speaker speaker :weight weight}))
+                     available)]
+    (rand-nth (map :speaker (sort-by #(rand (* (:weight %) (:weight %))) weights)))))
+
+
+
 (defn select-speaker [app-state last-speaker-name]
   "Determines the strategy to use based on app-state and picks a speaker."
   (let [strategy (:strategy @app-state)]
@@ -125,6 +145,7 @@
       :weighted-random (weighted-random app-state last-speaker-name)
       :least-recently-spoken (least-recently-spoken app-state last-speaker-name)
       :queue-based (queue-based app-state last-speaker-name)
+      :length-weighted-random (length-weighted-random app-state last-speaker-name)
       :priority-based (priority-based app-state last-speaker-name)
       :time-based-boost (time-based-boost app-state last-speaker-name)
       :group-based-rotation (group-based-rotation app-state last-speaker-name)

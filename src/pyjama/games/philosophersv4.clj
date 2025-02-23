@@ -24,14 +24,13 @@
            last-speaker-name nil]
 
       (when (and (pos? remaining-turns) (:chatting @app-state))
-        (let [
-              speaker-atom (pyjama.games.strategy/select-speaker app-state last-speaker-name)
+        (let [speaker-atom (pyjama.games.strategy/select-speaker app-state last-speaker-name)
               speaker (:name @speaker-atom)
               position (rand-nth [:left :right])
               ]
 
+          ; let everyone knows who is speaking ...
           (println speaker " is talking...")
-          ; who is speaking ...
           (broadcast-fn {:image (:avatar @speaker-atom) :name speaker :position position :text "..."})
 
           (pyjama.state/handle-chat speaker-atom)
@@ -46,6 +45,7 @@
               (broadcast-fn {:image (:avatar @speaker-atom) :name speaker :position position :text "<has left the chat>>"})
               (tell-everybody-else states speaker-atom {:role :system :content (str speaker " has left the chat")}))
             (assoc @speaker-atom :alive false))
+
           (let [last-response (last (:messages @speaker-atom))
                 formatted-response (assoc last-response
                                      :role :user

@@ -2,25 +2,24 @@ from datetime import datetime
 import requests
 
 # Configuration variables
-name = "Python"
-avatar = "https://i.pinimg.com/736x/28/17/e1/2817e11cb843de716180346af96b0a0b.jpg"
+name = "Pyllama"
+avatar = "https://images.fineartamerica.com/images/artworkimages/mediumlarge/3/cute-ball-python-yichen-gao.jpg"
 port = 8080
-system = "Hello I am Python"
+system = "Hello I am Python with Ollama"
 ollamaurl = "http://localhost:11434/api/chat"
 
-def handle_request(data-du-serveur):
+def handle_request(conversation):
 
-    print(data-du-serveur)
-
+    # print(data - du - serveur)
     data = {
         "model": "tinydolphin",
-        "messages": data-du-serveur['messages']
+        "stream": False,
+        "messages": conversation['messages']
     }
-
     response = requests.post(ollamaurl, json=data)
 
     response_json = response.json()
-#     print(response_json)
+
     text_content = response_json.get("message", {}).get("content", "")
 
     return {

@@ -12,6 +12,7 @@ def handle_request(conversation):
 
     # print(data - du - serveur)
     data = {
+        "system" : "Answer with very short messages, with wit.",
         "model": "tinydolphin",
         "stream": False,
         "messages": conversation['messages']

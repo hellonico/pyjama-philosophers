@@ -28,6 +28,6 @@ def handle_request(conversation):
         "created_at": datetime.utcnow().isoformat(),
         "message": {
             "role": "user",
-            "content": response_json
+            "content": text_content
         }
     }

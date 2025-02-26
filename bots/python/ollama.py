@@ -9,18 +9,14 @@ system = "Hello I am Python with Ollama"
 ollamaurl = "http://localhost:11434/api/chat"
 
 def handle_request(conversation):
-
-    # print(data - du - serveur)
     data = {
-        "system" : "Answer with very short messages, with wit.",
         "model": "tinydolphin",
         "stream": False,
-        "messages": conversation['messages']
+        "messages": [conversation['messages'][0]] + conversation['messages'][1:][-5:]
     }
+
     response = requests.post(ollamaurl, json=data)
-
     response_json = response.json()
-
     text_content = response_json.get("message", {}).get("content", "")
 
     return {

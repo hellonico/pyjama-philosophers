@@ -7,13 +7,16 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import socket
 
 # Import handler module dynamically
-handler = importlib.import_module("handler")
+# handler = importlib.import_module("handler")
+module_name = sys.argv[2] if len(sys.argv) > 1 else "handler"
+handler = importlib.import_module(module_name)
 
 # Retrieve configuration from handler.py
 NAME = getattr(handler, "name", "DefaultName")
 AVATAR = getattr(handler, "avatar", "http://example.com/avatar.png")
 PORT = getattr(handler, "port", 8080)
 SYSTEM = getattr(handler, "system", "I am the scary python")
+MODEL = getattr(handler, "model", "llama3.1")
 
 def get_local_ip():
     """Retrieve the local network IP address (LAN IP)"""
@@ -38,7 +41,7 @@ def send_initial_post(remote_server, ip):
             "name": NAME,
             "url": f"http://{ip}:{PORT}",
             "avatar": AVATAR,
-            "model": "llama3.1",
+            "model": MODEL, # this is just for showing
             "system": SYSTEM,
         }
 
@@ -86,7 +89,7 @@ def run(server_class=HTTPServer, handler_class=RequestHandler, remote_server="lo
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        print("Usage: python script.py <remote-http-server>")
+        print("Usage: python main.py <remote-http-server> <handler>")
         sys.exit(1)
 
     remote_server = sys.argv[1]

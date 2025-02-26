@@ -1,0 +1,19 @@
+.context-menu {
+    position: absolute;
+    display: none;
+    background: white;
+    border: 1px solid #ccc;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    padding: 5px 0;
+    z-index: 1000;
+}
+.context-menu a {
+    display: block;
+    padding: 8px 15px;
+    text-decoration: none;
+    color: black;
+}
+.context-menu a:hover {
+    background: #f0f0f0;
+}

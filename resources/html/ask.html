@@ -4,10 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conversation Summary</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="/quick.js"></script>
+    <link rel="stylesheet" href="/menu.css">
+    <script src="/menu.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+
+        * {
+            font-family: 'Orbitron', sans-serif;
+        }
+
         body {
             font-family: 'Orbitron', sans-serif;
             background: #0d0d0d;
@@ -114,9 +120,12 @@
 <h1>Psychoanalysis</h1>
 <div class="container">
     <div class="left-panel">
-        <button onclick="sendRequest('Summarize the conversation')">Summarize the conversation</button>
+        <button onclick="sendRequest('Summarize the conversation in 3 points')">Summarize the conversation in 3 points</button>
         <button onclick="sendRequest('What is the most disruptive thought')">What is the most disruptive thought</button>
         <button onclick="sendRequest('Who is the most disruptive speaker')">Who is the most disruptive speaker</button>
+        <button onclick="sendRequest('Is it a good time to stop this conversation? Answer by yes or no.')">
+            Is it a good time to stop this conversation? Answer by yes or no.
+        </button>
     </div>
 
     <div class="right-panel">

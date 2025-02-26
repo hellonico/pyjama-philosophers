@@ -3,85 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <title><!DOCTYPE html>
-      <html lang="en">
-      <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>State Display</title>
+        <html lang="en">
+        <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+        <title>State Display</title>
     <script src="/quick.js"></script>
-  <style>
-      body {
-          background: #0a0a0a;
-          color: white;
-          font-family: Arial, sans-serif;
-          text-align: center;
-          padding: 50px;
-      }
+    <link rel="stylesheet" href="/menu.css">
+    <script src="/menu.js"></script>
+    <style>
+        body {
+            background: #0a0a0a;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
 
-      #state-info {
-          background: rgba(20, 20, 40, 0.9);
-          padding: 25px; /* Extra padding for spacing */
-          border-radius: 15px;
-          box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
-          max-width: 500px;
-          width: 90%;
-          margin: 0 auto;
-          text-align: left;
-          font-size: 18px;
-          line-height: 1.6;
-          word-wrap: break-word;
-      }
+        #state-info {
+            background: rgba(20, 20, 40, 0.9);
+            padding: 25px; /* Extra padding for spacing */
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+            max-width: 500px;
+            width: 90%;
+            margin: 0 auto;
+            text-align: left;
+            font-size: 18px;
+            line-height: 1.6;
+            word-wrap: break-word;
+        }
 
-      #state-info strong {
-          color: cyan;
-          font-size: 20px;
-      }
+        #state-info strong {
+            color: cyan;
+            font-size: 20px;
+        }
 
-      #state-info::before {
-          content: "System Status";
-          display: block;
-          font-size: 22px;
-          font-weight: bold;
-          margin-bottom: 10px;
-          text-align: center;
-          color: #00eaff;
-      }
+        #state-info::before {
+            content: "System Status";
+            display: block;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+            color: #00eaff;
+        }
 
-      .error {
-          color: red;
-          font-weight: bold;
-      }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
 
-      #stop-btn {
-          background: linear-gradient(45deg, #ff0000, #990000);
-          color: white;
-          font-size: 18px;
-          font-weight: bold;
-          border: none;
-          border-radius: 8px;
-          padding: 12px 24px;
-          cursor: pointer;
-          box-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
-          transition: all 0.3s ease-in-out;
-          display: block;
-          margin: 20px auto;
-          text-transform: uppercase;
-      }
+        #stop-btn {
+            background: linear-gradient(45deg, #ff0000, #990000);
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
+            transition: all 0.3s ease-in-out;
+            display: block;
+            margin: 20px auto;
+            text-transform: uppercase;
+        }
 
-      #stop-btn:hover {
-          background: linear-gradient(45deg, #ff4444, #cc0000);
-          box-shadow: 0 0 25px rgba(255, 50, 50, 1);
-          transform: scale(1.05);
-      }
+        #stop-btn:hover {
+            background: linear-gradient(45deg, #ff4444, #cc0000);
+            box-shadow: 0 0 25px rgba(255, 50, 50, 1);
+            transform: scale(1.05);
+        }
 
-      #stop-btn:active {
-          transform: scale(0.95);
-          box-shadow: 0 0 10px rgba(255, 0, 0, 1);
-      }
+        #stop-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 0 10px rgba(255, 0, 0, 1);
+        }
 
 
-  </style>
-</head><body>
+    </style>
+</head>
+<body>
 
 <div id="state-info">Loading...</div>
 <button id="stop-btn" onclick="stopConversation()">Stop Conversation</button>
@@ -111,7 +115,7 @@
 
     async function stopConversation() {
         try {
-            await fetch("http://localhost:3001/stop", { method: "POST" });
+            await fetch("http://localhost:3001/stop", {method: "POST"});
             fetchState(); // Refresh state after stopping
         } catch (error) {
             console.error("Error stopping conversation:", error);

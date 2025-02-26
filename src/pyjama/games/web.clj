@@ -28,16 +28,17 @@
       (http/send! client json-msg))))
 
 (def app-state
-  (atom {:lag      {
-                    :last     0
-                    :strategy :fixed
-                    :params   [5000]
-                    }
-         :timeout 10000
-         :messages []
+  (atom {:lag
+         {
+          :last     0
+          :strategy :fixed
+          :params   [5000]
+          }
+         :timeout        10000
+         :messages       []
          ;:strategy :length-weighted-random
          :battle-message "This is a conversation battle. Everyone should chat, with simple, very very short, witty answers. May the most intelligent win."
-         :chatting false}))
+         :chatting       false}))
 
 (defn start-chat-thread [question]
   (async/thread
@@ -52,7 +53,7 @@
       broadcast!)))
 
 
-(defn- as-json[message]
+(defn- as-json [message]
   (->
     message
     (json/generate-string)
@@ -92,15 +93,19 @@
 (defn handle-summary [req]
   (let [body (slurp (:body req))
         json (json/parse-string body true)
-        question (or (:question json) "Make a five point summary of the conversation.")
+        question (or (:question json) "You are a moderator. Make a five point summary of the conversation.")
+        model (or (:model json) "tinyllama")
+        messages (conj (:messages @app-state)
+                                {:role :system :content question})
         summary
         {:url      (or (System/getenv "OLLAMA_URL") "http://localhost:11434")
-         :model    "tinydolphin"
+         :model    model
          :options  {:temperature 0.9}
          :stream   false
-         :messages (reverse (conj (:messages @app-state)
-                                  {:role :user :content question}))}
+         :messages messages
+         }
         ]
+    (clojure.pprint/pprint messages)
     (as-json (pyjama.core/ollama (:url summary) :chat (dissoc summary :url) identity))))
 
 (defn handle-questions [_]
@@ -183,6 +188,7 @@
   (POST "/join" [] handle-join)
   (POST "/intervention" [] handle-intervention)
   (POST "/summary" [] handle-summary)
+  (GET "/summary-json" [] handle-summary)
   (POST "/stop" [] handle-stop)
   (GET "/questions" [] handle-questions)
 

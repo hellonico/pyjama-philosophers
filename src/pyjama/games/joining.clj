@@ -20,9 +20,10 @@
          :model    (or model "tinyllama")
          :avatar   (or avatar (str "/images/" name ".png"))
          ; TODO: fix the temperature
-         :options  {:temperature (or (Float/parseFloat temperature) 0.9)}
+         :options  {:temperature (if temperature (Float/parseFloat temperature) 0.9)}
          :system   system
          :stream   false
+         :alive true
          :messages []}))
 
 (defn load-people [app-state people-file]

@@ -13,7 +13,8 @@
             [ring.util.codec :as codec]
             [ring.util.response :refer [content-type response]]
             [utils.core :as utils]
-            [utils.core]))
+            [utils.core])
+  (:import (java.time LocalTime)))
 
 (defonce ws-clients (atom #{}))
 
@@ -44,6 +45,7 @@
   (async/thread
     (swap! app-state assoc
            :messages []
+           :started (str (LocalTime/now))
            :current-question question
            :chatting true)
     (v4/chat-simulation
@@ -93,10 +95,12 @@
 (defn handle-summary [req]
   (let [body (slurp (:body req))
         json (json/parse-string body true)
-        question (or (:question json) "You are a moderator. Make a five point summary of the conversation.")
+        question
+        (str "You are a moderator. Given the current chat messages history, "
+             (or (:question json) "Make a five point summary of the conversation."))
         model (or (:model json) "tinyllama")
         messages (conj (:messages @app-state)
-                                {:role :system :content question})
+                       {:role :system :content question})
         summary
         {:url      (or (System/getenv "OLLAMA_URL") "http://localhost:11434")
          :model    model
@@ -105,7 +109,6 @@
          :messages messages
          }
         ]
-    (clojure.pprint/pprint messages)
     (as-json (pyjama.core/ollama (:url summary) :chat (dissoc summary :url) identity))))
 
 (defn handle-questions [_]
@@ -215,7 +218,6 @@
         :access-control-allow-origin [#".*"]
         :access-control-allow-methods [:get :post :put :delete :options]
         :access-control-allow-headers ["Content-Type" "Authorization"])))
-
 
 (defn -main []
   (let [port 3001

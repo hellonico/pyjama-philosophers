@@ -10,6 +10,23 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
 
+        .container {
+            display: flex;
+        }
+        .left-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 80vh;
+        }
+        .right-panel {
+            flex: 2;
+            border-left: 1px solid #ccc;
+            padding: 10px;
+            height: 80vh;
+        }
+
         * {
             font-family: 'Orbitron', sans-serif;
         }
@@ -29,13 +46,13 @@
             text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ff99;
         }
 
-        .container {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            max-width: 900px;
-            margin: auto;
-        }
+        /*.container {*/
+        /*    display: flex;*/
+        /*    justify-content: center;*/
+        /*    gap: 30px;*/
+        /*    max-width: 900px;*/
+        /*    margin: auto;*/
+        /*}*/
 
         .left-panel, .right-panel {
             width: 50%;
@@ -71,7 +88,7 @@
         }
 
         textarea {
-            width: 100%;
+            width: 95%;
             min-height: 100px;
             background: rgba(255, 255, 255, 0.1);
             border: 2px solid #00ffcc;
@@ -126,17 +143,18 @@
         <button onclick="sendRequest('Is it a good time to stop this conversation? Answer by yes or no.')">
             Is it a good time to stop this conversation? Answer by yes or no.
         </button>
-    </div>
+        <button onclick="sendRequest('Is the conversation stuck. Answer yes or no.')">Is the conversation stuck. Answer yes or no.</button>
+        <button onclick="sendRequest('Whats a good question to ask on the topic at this very moment.')">Whats a good question to ask on the topic at this very moment.</button>
 
-    <div class="right-panel">
         <textarea id="customQuestion" placeholder="Enter your question"></textarea>
         <button onclick="sendCustomRequest()">Submit</button>
     </div>
-</div>
 
-<br><br>
-<div id="loading">Thinking...</div>
-<div id="response"></div>
+    <div class="right-panel">
+        <div id="loading">Thinking...</div>
+        <div id="response"></div>
+    </div>
+</div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {

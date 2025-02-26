@@ -134,10 +134,11 @@
         // Create image & speaker container
 
         const imageContainer = document.createElement("div");
+        imageContainer.classList.add("image-container");
 
         if (data.image) {
             if (data.image.endsWith('.glb')) {
-                // imageContainer.classList.add("modelContainer");
+
                 addModelViewerToContainer(imageContainer, data.image)
             } else {
                 const img = document.createElement("img");

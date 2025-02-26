@@ -33,11 +33,10 @@
                     :strategy :fixed
                     :params   [5000]
                     }
+         :timeout 10000
          :messages []
-         :battle-message
-         :strategy :length-weighted-random
-         "This is a conversation battle. Everyone should chat, with simple, very very short, witty answers.
-                              May the most intelligent win. "
+         ;:strategy :length-weighted-random
+         :battle-message "This is a conversation battle. Everyone should chat, with simple, very very short, witty answers. May the most intelligent win."
          :chatting false}))
 
 (defn start-chat-thread [question]
@@ -52,23 +51,43 @@
       question
       broadcast!)))
 
+
+(defn- as-json[message]
+  (->
+    message
+    (json/generate-string)
+    (response)
+    (content-type "application/json")))
+
+(defn- page [page-file]
+  (fn [_]
+    (let [content (slurp (str "resources/html/" page-file))]
+      {:status  200
+       :headers {"Content-Type" "text/html"}
+       :body    (str/replace content "localhost:3001" (:host-s @app-state))})))
+
 (defn handle-question [req]
   (let [body (slurp (:body req))
         json (json/parse-string body true)
         question (:question json)]
     (println "Received question:" question)
-    (spit "questions.log" (str question "\n") :append true)
-    (start-chat-thread question)
-    (response (json/generate-string {:answer question}))))
+    (if (:chatting @app-state)
+      (do
+        (println "but ... already chatting...")
+        (as-json {:started false})
+        )
+      (do
+        (spit "questions.log" (str question "\n") :append true)
+        (start-chat-thread question)
+        (as-json {:started true :answer question})))))
 
 (defn handle-state [_]
-  (utils.core/mark-alive app-state)
+  ; TODO: do a separate thread to mark alive people?
+  ;(utils.core/mark-alive app-state)
   (clojure.pprint/pprint (map #(vector (:name @%) (:url @%) (:alive @%)) (:people @app-state)))
   (-> app-state
       utils.core/deep-deref
-      json/generate-string
-      response
-      (content-type "application/json")))
+      as-json))
 
 (defn handle-summary [req]
   (let [body (slurp (:body req))
@@ -82,13 +101,7 @@
          :messages (reverse (conj (:messages @app-state)
                                   {:role :user :content question}))}
         ]
-    (->
-      (pyjama.core/ollama (:url summary) :chat (dissoc summary :url) identity)
-      (json/generate-string)
-      (response)
-      (content-type "application/json"))
-    )
-  )
+    (as-json (pyjama.core/ollama (:url summary) :chat (dissoc summary :url) identity))))
 
 (defn handle-questions [_]
   (->
@@ -112,7 +125,7 @@
         content (str human-name " says " human-message)
         content (if shout? (str/upper-case content) content)
         broadcast-msg {:image image :position :left :name human-name :text content}
-        new-msg {:name human-name :role :human :content content}
+        new-msg {:name human-name :role :user :content content}
         ]
 
     (swap! app-state update :messages conj new-msg)
@@ -139,9 +152,7 @@
             (println (:name json) " failed to joined."))
         http-res {:body ok?}
         ]
-    (-> (json/generate-string http-res)
-        response
-        (content-type "application/json"))))
+    (as-json http-res)))
 
 (defn handle-leave [req]
   (let [
@@ -154,22 +165,12 @@
         ]
     (if find?
       (do
-        (swap! app-state update :people (fn [people] (remove #(= (:name (deref %)) name) people)))
-        {:status 200 :body "true"})
-      {:status 400 :body "false"})))
+        (swap! app-state update :people (fn [people] (remove #(= (:name (deref %)) name) people)))))
+    (as-json {:body find?})))
 
 (defn handle-stop [_]
   (swap! app-state assoc :chatting false)
-  {:status  200
-   :headers {"Content-Type" "text/html"}
-   :body    "stopped"})
-
-(defn- page [page-file]
-  (fn [_]
-    (let [content (slurp (str "resources/html/" page-file))]
-      {:status  200
-       :headers {"Content-Type" "text/html"}
-       :body    (str/replace content "http://localhost:3001" (:host @app-state))})))
+  (as-json "stopped"))
 
 (defroutes
   app-routes
@@ -215,7 +216,9 @@
         ip (utils/get-local-ip)
         host (str "http://" ip ":" port)
         ]
-    (swap! app-state assoc :host host)
+    (swap! app-state assoc
+           :host-s (str ip ":" port)
+           :host host)
     (println "Starting server on " host)
-    (joining/load-people app-state "csv/personalitiesv5.csv")
+    (joining/load-people app-state "csv/personalitiesv6.csv")
     (http/run-server (app) {:host "0.0.0.0" :port port})))

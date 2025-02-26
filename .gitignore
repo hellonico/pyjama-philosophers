@@ -3,3 +3,4 @@ experimental
 pyjama-philosophers.iml
 /.nrepl-port
 /questions.log
+/bots/ruby/.idea/vcs.xml

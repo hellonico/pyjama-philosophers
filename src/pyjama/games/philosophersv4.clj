@@ -37,8 +37,11 @@
           (pyjama.state/handle-chat speaker-atom)
 
           ; wait for input
-          (while (:processing @speaker-atom)
-            (Thread/sleep 500))
+          (let [start-time (System/currentTimeMillis)
+                timeout-ms (:timeout @app-state)]  ;; 10 seconds timeout
+            (while (and (:processing @speaker-atom)
+                        (< (- (System/currentTimeMillis) start-time) timeout-ms))
+              (Thread/sleep 500)))
 
           (if (not (nil? (:error @speaker-atom)))
             (do

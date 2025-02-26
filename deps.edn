@@ -15,7 +15,8 @@
   {:git/url "https://github.com/hellonico/pyjama.git"  :sha     "972d989e3269545fa81dc22533b52b3312ece982"}
   ;{:local/root "../pyjama"}
   hellonico/pyjama-io
-  {:local/root "../pyjama-io"}
+  {:git/url "https://github.com/hellonico/pyjama-io.git"  :sha     "a964fc1b59241e4ee1b7308121cb6fc42792ff3e"}
+  ;{:local/root "../pyjama-io"}
   org.clojure/data.csv    {:mvn/version "1.1.0"}
 
   ring/ring               {:mvn/version "1.13.0"}

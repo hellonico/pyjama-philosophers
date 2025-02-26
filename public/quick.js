@@ -10,7 +10,7 @@ document.addEventListener("keydown", function (event) {
     if (event.ctrlKey) {
         switch (event.key) {
             case "1":
-                window.location.href = "/welcome"; // Change URL as needed
+                window.location.href = "/";
                 break;
             case "2":
                 window.location.href = "/chat";

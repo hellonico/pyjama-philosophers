@@ -32,7 +32,7 @@
 
           ; let everyone knows who is speaking ...
           (println speaker " is talking...")
-          (broadcast-fn {:image (:avatar @speaker-atom) :name speaker :position position :text "..."})
+          (broadcast-fn {:image (:avatar @speaker-atom) :name speaker :position position :content "..."})
 
           (pyjama.state/handle-chat speaker-atom)
 
@@ -46,7 +46,7 @@
           (if (not (nil? (:error @speaker-atom)))
             (do
               (println (:error @speaker-atom))
-              (broadcast-fn {:image (:avatar @speaker-atom) :name speaker :position position :text "<has left the chat>>"})
+              (broadcast-fn {:image (:avatar @speaker-atom) :name speaker :position position :content "<has left the chat>>"})
               (tell-everybody-else states speaker-atom {:role :system :content (str speaker " has left the chat")}))
             (assoc @speaker-atom :alive false))
 
@@ -60,7 +60,7 @@
 
             (if (:chatting @app-state)
               (do
-                (broadcast-fn {:image (:avatar @speaker-atom) :position position :name speaker :text (:content last-response)})
+                (broadcast-fn {:image (:avatar @speaker-atom) :position position :name speaker :content (:content last-response)})
                 (tell-everybody-else states speaker-atom formatted-response)
                 (let [
                       wait-config (-> @app-state :lag)

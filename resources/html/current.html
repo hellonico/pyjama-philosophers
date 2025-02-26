@@ -95,7 +95,7 @@
             document.getElementById("state-info").innerHTML = `
                     <strong>Current Question:</strong> ${data["current-question"] || "N/A"} <br>
                     <strong>Chatting:</strong> ${data.chatting ? "Yes" : "No"} <br>
-                    <strong>Lag:</strong> ${data.lag} ms <br>
+                    <strong>Lag:</strong> ${data.lag.strategy} ms <br>
                     <strong>People:</strong> ${data.people.length} (${data.people.map(p => p.name).join(", ")}) <br>
                     <strong>Messages:</strong> ${data.messages.length}
                 `;
